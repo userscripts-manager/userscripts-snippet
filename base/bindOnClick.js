@@ -2,7 +2,7 @@
 /**
  * Bind an onClick handler an element. Returns uninstall handler
  * 
- * @param {HtmlElement} element The element to bind the handler
+ * @param {HTMLElement} element The element to bind the handler
  * @param {()=>boolean|undefined} callback The onClick handler
  * @returns {()=>{}}
  */
@@ -14,5 +14,5 @@ const bindOnClick = (element, callback) => {
             e.stopImmediatePropagation()
         }
     }
-    return element.registerEventListener('click', onClick, true);
+    return registerEventListener(element, 'click', onClick, true);
 }

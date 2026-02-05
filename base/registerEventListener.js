@@ -6,6 +6,7 @@
  * @param {string} eventType The event type
  * @param {EventListenerOrEventListenerObject} callback The callback to call when the event is triggered
  * @param {boolean|AddEventListenerOptions=} options The options to pass to addEventListener
+ * @return {()=>{}} The unregister function
  */
 const registerEventListener = (element, eventType, callback, options) => {
     if (element.addEventListener) {
@@ -22,5 +23,3 @@ const registerEventListener = (element, eventType, callback, options) => {
         }
     }
 }
-prototypeBind(HTMLElement, registerEventListener)
-prototypeBind(EventTarget, registerEventListener)

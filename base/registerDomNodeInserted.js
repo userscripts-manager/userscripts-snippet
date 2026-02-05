@@ -6,7 +6,7 @@
  * @param {EventListener} callback 
  * @return {()=>{}} The unregister function
  */
- const registerDomNodeInserted = (callback) => {
+const registerDomNodeInserted = (callback) => {
     let nodeChangeInProgress = false
 
     /** @type{EventListener} */
@@ -18,7 +18,7 @@
         }
 
     }
-    const unregister = document.documentElement.registerEventListener('DOMNodeInserted', onNodeChanged, false);
+    const unregister = registerEventListener(documentElement, 'DOMNodeInserted', onNodeChanged, false);
     onNodeChanged()
     return unregister;
 }

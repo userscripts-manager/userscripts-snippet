@@ -1,11 +1,10 @@
 // @import{registerEventListener}
-// @import{prototypeBind}
 /**
  * Wrap addEventListener and removeEventListener using a pattern where the unregister function is returned for click events
  * @param {HTMLElement|EventTarget} eventTarget The object on which to register the event
  * @param {EventListenerOrEventListenerObject} callback The callback to call when the event is triggered
  * @param {boolean|AddEventListenerOptions=} options The options to pass to addEventListener
- * @returns 
+ * @returns {()=>{}} The unregister function
  */
 const registerClickListener = (eventTarget, callback, options) => {
     return registerEventListener(eventTarget, 'click', (e) => {
@@ -17,5 +16,3 @@ const registerClickListener = (eventTarget, callback, options) => {
         return true
     }, options);
 }
-prototypeBind(HTMLElement, registerClickListener)
-prototypeBind(EventTarget, registerClickListener)

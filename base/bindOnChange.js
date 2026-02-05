@@ -14,5 +14,5 @@ const bindOnChange = (element, callback) => {
             e.stopImmediatePropagation()
         }
     }
-    return element.registerEventListener('change', onChange, true);
+    return registerEventListener(element, 'change', onChange, true);
 }
