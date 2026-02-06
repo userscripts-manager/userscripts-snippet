@@ -69,7 +69,11 @@ const createElementExtended = (name, params) => {
         element.id = id
     }
     if (prevSibling) {
-        prevSibling.parentElement.insertBefore(element, prevSibling.nextSibling)
+        if (prevSibling.parentElement) {
+            prevSibling.parentElement.insertBefore(element, prevSibling.nextSibling)
+        } else {
+            prevSibling.parentElement.appendChild(element)
+        }
     }
     if (nextSibling) {
         nextSibling.parentElement.insertBefore(element, nextSibling)
