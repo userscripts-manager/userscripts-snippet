@@ -27,7 +27,7 @@ const downloadZip = async (fileName, contentProvider, options = {}) => {
         options.onFileCount(count);
     }
     if (options.onBlobContent) {
-        options.onBlobContent(content);
+        await options.onBlobContent(content);
     }
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
