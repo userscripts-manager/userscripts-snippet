@@ -8,19 +8,31 @@
  * exactly once for each element
  * @param {()=>[HTMLElement]} elementProvider 
  * @param {(element: HTMLElement)=>{}} callback 
+ * @param {(element: HTMLElement)=>{}} callbackOnNotHere called when an element is not here anymore (not provided by the elementProvider anymore)
  */
-const registerDomNodeMutatedUnique = (elementProvider, callback) => {
-    const domNodesHandled = new Set()
+const registerDomNodeMutatedUnique = (elementProvider, callback, callbackOnNotHere) => {
+    const domNodesHandled = new Map()
+    let indexIteration = 0
 
     return registerDomNodeMutated(() => {
+        indexIteration++;
+        let currentIndexIteration = indexIteration
         for (let element of elementProvider()) {
             if (!domNodesHandled.has(element)) {
-                domNodesHandled.add(element)
+                domNodesHandled.set(element, {element, indexIteration: currentIndexIteration})
                 const result = callback(element)
                 if (result === false) {
                     domNodesHandled.delete(element)
                 }
+            } else {
+                domNodesHandled.get(element).indexIteration = currentIndexIteration
             }
+        }
+        for (let item of domNodesHandled.values().filter(item=>item.indexIteration !== currentIndexIteration)) {
+            if (callbackOnNotHere) {
+                callbackOnNotHere(item.element)
+            }
+            domNodesHandled.delete(item.element)
         }
     })
 }
