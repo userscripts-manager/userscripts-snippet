@@ -16,8 +16,8 @@ const ensureVisible = (element, scrollableContainer, options) => {
 
     const dirMinName = options.dirMinName || 'top'
     const dirMaxName = options.dirMaxName || 'bottom'
-    const ratioScroll = options.ratioScroll || 1/5
-    const guardScroll = options.guardScroll || 1/5
+    const ratioScroll = options.ratioScroll !== undefined ? options.ratioScroll : 1/5
+    const guardScroll = options.guardScroll !== undefined ? options.guardScroll : 1/5
     let offset = 0
 
     if (scrollableContainer === document.body || scrollableContainer === document.body.parentElement) {
