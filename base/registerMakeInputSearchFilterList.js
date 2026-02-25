@@ -1,3 +1,5 @@
+// @import{ensureVisible}
+// @import{RegistrationManager}
 /**
  * Transform an input element into a search filter for a list of items with show/hide and current item management. Use the register pattern.
  * 
@@ -12,6 +14,10 @@
  * @param {(item: {name: string, element: HTMLElement, shown: boolean}, isShown: boolean) => void} [options.showItem] A function to show or hide an item (default is to remove the 'x-filtered-out' class from the element)
  * @param {(item: {name: string, element: HTMLElement, shown: boolean}, isCurrent: boolean) => void} [options.setItemCurrent] A function to set an item as current or not (default is to add/remove the 'x-current-item' class from the element)
  * @param {HTMLElement} [options.scrollableContainer] The container element to ensure the current item is visible within the scrollable area when it changes (default is null, no scrolling)
+ * @param {string} [options.scrollableDirMinName] The name of the minimum direction property for scrolling (e.g. 'top', default is 'top')
+ * @param {string} [options.scrollableDirMaxName] The name of the maximum direction property for scrolling (e.g. 'bottom', default is 'bottom')
+ * @param {number} [options.ratioScroll] The ratio to use for scrolling the container (default is 1/5, meaning the element will be scrolled to be 1/5 from the top/left of the container)
+ * @param {number} [options.guardScroll] The guard ratio to use for determining when to scroll (default is 1/5, meaning the element will be considered visible if it is within the area defined by 1/5 from the top/left and 1/5 from the bottom/right of the container)
  * @param {(movePosition: (deltaPosition: number) => void) => void} [options.onMovePosition] A function that is called with the movePosition function to allow moving the current position by a delta (e.g. for keyboard navigation)
  * @param {(getCurrentItem: () => null | {name: string, element: HTMLElement, shown: boolean}) => void} [options.onGetCurrentItem] A function that is called with the getCurrentItem function to allow getting the current item (e.g. for keyboard actions on the current item)
  * @param {() => {}} [options.onUpdateFilteredList] A function that is called when the filtered list is updated to allow reacting to changes in the filtered items
@@ -58,6 +64,10 @@ const registerMakeInputSearchFilterList = (inputElement, list, options) => {
     let currentItem = null
 
     const scrollableContainer = options.scrollableContainer || null
+    const scrollableDirMinName = options.scrollableDirMinName
+    const scrollableDirMaxName = options.scrollableDirMaxName
+    const ratioScroll = options.ratioScroll
+    const guardScroll = options.guardScroll
 
     registrationManager.onRegistration(() => {
         if (currentItem !== null) {
@@ -66,6 +76,7 @@ const registerMakeInputSearchFilterList = (inputElement, list, options) => {
         currentItem = null;
         currentPosition = -1;
     })
+
     const updatePosition = (newPosition) => {
         if (currentPosition !== newPosition || currentItem !== filteredList[newPosition]) {
             setItemCurrent(currentItem, false)
@@ -77,7 +88,7 @@ const registerMakeInputSearchFilterList = (inputElement, list, options) => {
             } else {
                 setItemCurrent(currentItem, true)
                 if (scrollableContainer) {
-                    ensureVisible(getElement(currentItem), scrollableContainer)
+                    ensureVisible(getElement(currentItem), scrollableContainer, { dirMinName: scrollableDirMinName, dirMaxName: scrollableDirMaxName, ratioScroll, guardScroll })
                 }
 
             }
