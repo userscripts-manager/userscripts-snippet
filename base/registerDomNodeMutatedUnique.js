@@ -7,8 +7,8 @@
  * Ensure that when an element matching the query elementProvider, the callback is called with the element 
  * exactly once for each element
  * @param {()=>[HTMLElement]} elementProvider 
- * @param {(element: HTMLElement)=>{}} callback 
- * @param {(element: HTMLElement)=>{}} callbackOnNotHere called when an element is not here anymore (not provided by the elementProvider anymore)
+ * @param {(element: HTMLElement, options: {currentIteration: number, indexElement: number})=>{}} callback 
+ * @param {(element: HTMLElement, options: {currentIteration: number})=>{}} [callbackOnNotHere] called when an element is not here anymore (not provided by the elementProvider anymore)
  */
 const registerDomNodeMutatedUnique = (elementProvider, callback, callbackOnNotHere) => {
     const domNodesHandled = new Map()
@@ -16,21 +16,23 @@ const registerDomNodeMutatedUnique = (elementProvider, callback, callbackOnNotHe
 
     return registerDomNodeMutated(() => {
         indexIteration++;
-        let currentIndexIteration = indexIteration
+        let currentIteration = indexIteration
+        let indexElement = 0
         for (let element of elementProvider()) {
             if (!domNodesHandled.has(element)) {
-                domNodesHandled.set(element, {element, indexIteration: currentIndexIteration})
-                const result = callback(element)
+                domNodesHandled.set(element, {element, indexIteration: currentIteration})
+                const result = callback(element, {currentIteration, indexElement})
                 if (result === false) {
                     domNodesHandled.delete(element)
                 }
             } else {
-                domNodesHandled.get(element).indexIteration = currentIndexIteration
+                domNodesHandled.get(element).indexIteration = currentIteration
             }
+            indexElement++;
         }
-        for (let item of domNodesHandled.values().filter(item=>item.indexIteration !== currentIndexIteration)) {
+        for (let item of domNodesHandled.values().filter(item=>item.indexIteration !== currentIteration)) {
             if (callbackOnNotHere) {
-                callbackOnNotHere(item.element)
+                callbackOnNotHere(item.element, {currentIteration})
             }
             domNodesHandled.delete(item.element)
         }
