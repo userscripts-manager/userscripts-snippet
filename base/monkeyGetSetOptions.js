@@ -1,10 +1,10 @@
 // @import{monkeyGetSetValue}
 
 /**
- * Récupère les options en utilisant les valeurs stockées ou les valeurs par défaut
+ * Get options using the values stored in monkey store or the default values
  * 
- * @param {Object<String, Object>} baseOptions Les valeurs par défaut des options
- * @returns {Object<String, Object>} Les options récupérées
+ * @param {Object<String, Object>} baseOptions Default values
+ * @returns {Object<String, Object>} Options to use
  */
 const monkeyGetSetOptions = (baseOptions) => {
     const options = Object.fromEntries(Object.entries(baseOptions).map(([k, v]) => [k, monkeyGetSetValue(k, v)]));
