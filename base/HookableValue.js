@@ -18,7 +18,7 @@ class HookableValue {
      * Sets the value and calls the hooks if the value changed
      * 
      * @param {T} newValue The new value
-     * @returns {void}
+     * @returns {Promise<void>} A promise that resolves when all hooks have been called
      */
     async setValue(newValue) {
         const oldValue = this.value;
