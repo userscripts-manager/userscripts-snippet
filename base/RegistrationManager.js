@@ -32,9 +32,9 @@ class RegistrationManager {
     /**
      * Cleanup all the cleanup functions.
      */
-    cleanupAll() {
+    async cleanupAll() {
         this.hasBeenCleanedUp = true
-        this.cleanupFunctions.forEach(cleanup => cleanup())
+        await Promise.all(this.cleanupFunctions.map(async (cleanup) => await cleanup()))
         this.cleanupFunctions.length = 0
     }
 }
