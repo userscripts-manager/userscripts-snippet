@@ -1,10 +1,10 @@
-// @grant{GM_listValues}
+// @grant{GM.listValues}
 /**
  * List all keys stored in the monkey storage (Tampermonkey/Greasemonkey/Violentmonkey/etc.)
- * Just an alias for GM_listValues, for coherence use with monkeyGetSetValue.
+ * Just an alias for GM.listValues, for coherence use with monkeyGetSetValue.
  * 
- * @returns {String[]} An array of all keys stored in the monkey storage
+ * @returns {Promise<String[]>} A promise that resolves to an array of all keys stored in the monkey storage
  */
-const monkeyListKeys = () => {
-    return GM_listValues();
+const monkeyListKeys = async () => {
+    return await GM.listValues();
 };
