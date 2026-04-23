@@ -6,5 +6,5 @@
  * @returns {Promise<String[]>} A promise that resolves to an array of all keys stored in the monkey storage
  */
 const monkeyListKeys = async () => {
-    return await GM.listValues();
+    return [...await GM.listValues()];
 };
