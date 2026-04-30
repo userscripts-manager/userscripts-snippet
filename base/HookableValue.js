@@ -52,6 +52,24 @@ class HookableValue {
     }
 
     /**
+     * Registers a callback to be called when any of the given hookable values changes
+     * @param {HookableValue[]} hookableValues The hookable values to watch
+     * @param {(newValues: any[], oldValues: any[]) => Promise<void>} callback The callback (that may be async) that will receive the new and old values of all the hookable values
+     * @returns {()=>void} The unregister function
+     */
+    static registerAll(hookableValues, callback) {
+        const unregisterFunctions = hookableValues.map(
+            (hookableValue,indexHookable) => hookableValue.register(
+                async (value, oldValue) => await callback(
+                    hookableValues.map((hv,indexValue) => indexValue === indexHookable ? value : hv.value), 
+                    hookableValues.map((hv,indexValue) => indexValue === indexHookable ? oldValue : hv.value)
+                )
+            )
+        );
+        return () => unregisterFunctions.forEach(unregister => unregister());
+    }
+
+    /**
      * Clears all registered callbacks
      * @returns {void}
      */
