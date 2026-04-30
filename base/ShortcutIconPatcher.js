@@ -56,25 +56,14 @@ class ShortcutIconPatcher {
             }
         });
 
-        this.originalImageStruct.register(async (newImageStruct) => {
-            await this.updateIcon(newImageStruct, this.macaronColor.value, this.text.value, this.textFgColor.value, this.textBgColor.value);
-        })
-
-        this.macaronColor.register(async (newMacaronColor) => {
-            await this.updateIcon(this.originalImageStruct.value, newMacaronColor, this.text.value, this.textFgColor.value, this.textBgColor.value);
-        })
-
-        this.text.register(async (newText) => {
-            await this.updateIcon(this.originalImageStruct.value, this.macaronColor.value, newText, this.textFgColor.value, this.textBgColor.value);
-        })
-
-        this.textFgColor.register(async (newTextFgColor) => {
-            await this.updateIcon(this.originalImageStruct.value, this.macaronColor.value, this.text.value, newTextFgColor, this.textBgColor.value);
-        })
-
-        this.textBgColor.register(async (newTextBgColor) => {
-            await this.updateIcon(this.originalImageStruct.value, this.macaronColor.value, this.text.value, this.textFgColor.value, newTextBgColor);
-        })
+        this.registrationManager.onRegistration(
+            HookableValue.registerAll(
+                [this.originalImageStruct, this.macaronColor, this.text, this.textFgColor, this.textBgColor],
+                async ([originalImageStruct, macaronColor, text, textFgColor, textBgColor]) => {
+                    await this.updateIcon(originalImageStruct, macaronColor, text, textFgColor, textBgColor);
+                }
+            )
+        )
 
         forEachSync(getElements('link[rel~="icon"]'), async (link) => {
             if (this.currentShortcutIcon !== link) {
