@@ -69,7 +69,7 @@ const getPersistentParameterValue = (() => {
             const value = await monkeyGetSetValue(parameterNameForMonkey, defaultValue);
             hookableValueParameterValues[parameterName] = new HookableValue(parameterName);
             const hookableValue = hookableValueParameterValues[parameterName];
-            hookableValue.register(async (newValue) => {
+            await hookableValue.register(async (newValue) => {
                 await monkeySetValue(parameterNameForMonkey, newValue);
 
                 if (menuCommandUnregisterFunction) {
