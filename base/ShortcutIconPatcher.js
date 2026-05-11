@@ -57,7 +57,7 @@ class ShortcutIconPatcher {
         });
 
         this.registrationManager.onRegistration(
-            HookableValue.registerAll(
+            await HookableValue.registerAll(
                 [this.originalImageStruct, this.macaronColor, this.text, this.textFgColor, this.textBgColor],
                 async ([originalImageStruct, macaronColor, text, textFgColor, textBgColor]) => {
                     await this.updateIcon(originalImageStruct, macaronColor, text, textFgColor, textBgColor);
