@@ -42,38 +42,56 @@ class HookableValue {
     /**
      * Register a callback to be called when the value changes
      * @param {(newValue:T, oldValue:T)=>Promise<void>} callback The callback (that may be async)
-     * @returns {()=>void} The unregister function
+     * @returns {()=>Promise<void>} The unregister function
      */
-    register(callback) {
+    async register(callback) {
         this.callbacks.push(callback);
-        return () => {
+        return async () => {
             this.callbacks = this.callbacks.filter(cb => cb !== callback);
         }
+    }
+
+    /**
+     * Registers a callback and immediately calls it with the current value
+     * @param {(newValue:T, oldValue:T)=>Promise<void>} callback The callback (that may be async)
+     * @returns {()=>Promise<void>} The unregister function
+     */
+    async registerAndCall(callback) {
+        const unregisterFunction = await this.register(callback);
+        await callback(this.value, this.value);
+        return unregisterFunction;
     }
 
     /**
      * Registers a callback to be called when any of the given hookable values changes
      * @param {HookableValue[]} hookableValues The hookable values to watch
      * @param {(newValues: any[], oldValues: any[]) => Promise<void>} callback The callback (that may be async) that will receive the new and old values of all the hookable values
-     * @returns {()=>void} The unregister function
+     * @returns {()=>Promise<void>} The unregister function
      */
-    static registerAll(hookableValues, callback) {
-        const unregisterFunctions = hookableValues.map(
+    static async registerAll(hookableValues, callback) {
+        const unregisterFunctions = await Promise.all(hookableValues.map(
             (hookableValue,indexHookable) => hookableValue.register(
                 async (value, oldValue) => await callback(
                     hookableValues.map((hv,indexValue) => indexValue === indexHookable ? value : hv.value), 
                     hookableValues.map((hv,indexValue) => indexValue === indexHookable ? oldValue : hv.value)
                 )
             )
-        );
-        return () => unregisterFunctions.forEach(unregister => unregister());
+        ));
+        return async () => {
+            for (const unregister of unregisterFunctions) {
+                await unregister();
+            }
+        };
     }
 
     /**
      * Clears all registered callbacks
-     * @returns {void}
+     * @returns {Promise<void>}
      */
-    clearCallbacks() {
+    async clearCallbacks() {
+        for (const callback of this.callbacks) {
+            await callback(null, this._value);
+        }
         this.callbacks = [];
     }
 
