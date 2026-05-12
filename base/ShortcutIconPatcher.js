@@ -84,7 +84,7 @@ class ShortcutIconPatcher {
         }
 
         this.registrationManager.onRegistration(
-            registerDomNodeMutatedUnique(
+            await registerDomNodeMutatedUnique(
                 () => getElements('link[rel~="icon"]'),
                 async (link) => {
                     if (link !== this.currentShortcutIcon) {

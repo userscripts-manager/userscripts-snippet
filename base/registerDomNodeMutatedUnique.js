@@ -7,21 +7,21 @@
  * Ensure that when an element matching the query elementProvider, the callback is called with the element 
  * exactly once for each element
  * @param {()=>[HTMLElement]} elementProvider 
- * @param {(element: HTMLElement, options: {currentIteration: number, indexElement: number})=>{}} callback 
- * @param {(element: HTMLElement, options: {currentIteration: number})=>{}} [callbackOnNotHere] called when an element is not here anymore (not provided by the elementProvider anymore)
+ * @param {(element: HTMLElement, options: {currentIteration: number, indexElement: number})=>Promise<void>} callback 
+ * @param {(element: HTMLElement, options: {currentIteration: number})=>Promise<void>} [callbackOnNotHere] called when an element is not here anymore (not provided by the elementProvider anymore)
  */
-const registerDomNodeMutatedUnique = (elementProvider, callback, callbackOnNotHere) => {
+const registerDomNodeMutatedUnique = async (elementProvider, callback, callbackOnNotHere) => {
     const domNodesHandled = new Map()
     let indexIteration = 0
 
-    return registerDomNodeMutated(() => {
+    return registerDomNodeMutated(async () => {
         indexIteration++;
         let currentIteration = indexIteration
         let indexElement = 0
         for (let element of elementProvider()) {
             if (!domNodesHandled.has(element)) {
                 domNodesHandled.set(element, {element, indexIteration: currentIteration})
-                const result = callback(element, {currentIteration, indexElement})
+                const result = await callback(element, {currentIteration, indexElement})
                 if (result === false) {
                     domNodesHandled.delete(element)
                 }
@@ -32,7 +32,7 @@ const registerDomNodeMutatedUnique = (elementProvider, callback, callbackOnNotHe
         }
         for (let item of domNodesHandled.values().filter(item=>item.indexIteration !== currentIteration)) {
             if (callbackOnNotHere) {
-                callbackOnNotHere(item.element, {currentIteration})
+                await callbackOnNotHere(item.element, {currentIteration})
             }
             domNodesHandled.delete(item.element)
         }
