@@ -6,11 +6,11 @@
  * 
  * @template T
  * @param {String} key The key to use to name the value to get or set
- * @param {T} value The default value to set and return if not defined
+ * @param {T} defaultValue The default value to set and return if not defined
  * @returns {Promise<HookableValue<T>>} The value to use wrapped in a HookableValue, so you can register hooks to it and update the value when needed. When the value is updated, it will be persisted in the monkey storage.
  */
-const monkeyGetSetParameter = async (key, value) => {
-    const value = await monkeyGetSetValue(key, value);
+const monkeyGetSetParameter = async (key, defaultValue) => {
+    const value = await monkeyGetSetValue(key, defaultValue);
     const hookableValue = new HookableValue(value);
     await hookableValue.register(async (newValue) => {
         await monkeySetValue(key, newValue);
