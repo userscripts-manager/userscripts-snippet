@@ -11,7 +11,7 @@
  */
 const monkeyGetSetParameter = async (key, defaultValue) => {
     const value = await monkeyGetSetValue(key, defaultValue);
-    const hookableValue = new HookableValue(value);
+    const hookableValue = new HookableValue(key, value);
     await hookableValue.register(async (newValue) => {
         await monkeySetValue(key, newValue);
     });
