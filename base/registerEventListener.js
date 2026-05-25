@@ -1,4 +1,3 @@
-// @import{prototypeBind}
 /**
  * Wrap addEventListener and removeEventListener using a pattern where the unregister function is returned
  * 
