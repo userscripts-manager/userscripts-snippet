@@ -86,4 +86,20 @@ describe('groupBy', () => {
             ],
         });
     });
+    it('should handle grouping simple objects', () => {
+        const items = ['apple', 'banana', 'avocado', 'blueberry'];
+        const grouped = groupBy(items, item => item[0]);
+        expect(grouped).toEqual({
+            'a': ['apple', 'avocado'],
+            'b': ['banana', 'blueberry'],
+        });
+    });
+    it('should handle grouping numbers', () => {
+        const items = [1, 2, 3, 4, 5];
+        const grouped = groupBy(items, item => (item % 2 === 0 ? 'even' : 'odd'));
+        expect(grouped).toEqual({
+            'odd': [1, 3, 5],
+            'even': [2, 4],
+        });
+    });
 });
