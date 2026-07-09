@@ -13,11 +13,11 @@
 const getPersistentParameterValueString = async (parameterName, defaultValue, options) => {
     return await getPersistentParameterValue(parameterName, defaultValue, {
         onParameterNeedNewValue: async (oldValue) => {
-            const newValue = prompt(`Enter new value for ${parameterName}:`, oldValue);
+            const newValue = prompt(`⌨️ Enter new value for ${parameterName}:`, oldValue);
             return newValue;
         },
         getMenuLabel: async (parameterName, newValue) => {
-            return `Change ${parameterName} (current : ${newValue})`;
+            return `⚙️ Change ${parameterName} (current : ${newValue})`;
         },
         ...options,
     })

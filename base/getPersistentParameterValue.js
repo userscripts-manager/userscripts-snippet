@@ -45,9 +45,9 @@ const getPersistentParameterValue = (() => {
         if (!options) {
             options = {};
         }
-        const getMenuLabel = options?.getMenuLabel ?? ((parameterName, newValue) => `Change ${parameterName} (current : ${newValue})`);
+        const getMenuLabel = options?.getMenuLabel ?? ((parameterName, newValue) => `⚙️ Change ${parameterName} (current : ${newValue})`);
         const onParameterNeedNewValue = options?.onParameterNeedNewValue ?? (async (oldValue) => {
-            const newValue = prompt(`Enter new value for ${parameterName}:`, oldValue);
+            const newValue = prompt(`⌨️ Enter new value for ${parameterName}:`, oldValue);
             return newValue;
         });
         const alertOnChange = options?.alertOnChange ?? false;
@@ -85,7 +85,7 @@ const getPersistentParameterValue = (() => {
                 });
 
                 if (alertOnChange) {
-                    alert(`Parameter [${parameterName}] is set to ${hookableValue.value}`);
+                    alert(`ℹ️ Parameter [${parameterName}] is set to ${hookableValue.value}`);
                 }
             });
             hookableValue.value = value;
