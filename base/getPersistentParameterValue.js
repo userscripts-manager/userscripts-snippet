@@ -1,6 +1,7 @@
 // @import{exportOnWindow}
-// @import{monkeyGetSetValue}
+// @import{monkeyGetValue}
 // @import{monkeySetValue}
+// @import{monkeyDeleteValue}
 // @import{registerMenuCommand}
 // @import{HookableValue}
 // @import{PERSISTENT_PARAMETER_SCOPE}
@@ -52,6 +53,7 @@ const getPersistentParameterValue = (() => {
         });
         const alertOnChange = options?.alertOnChange ?? false;
         const scope = options?.scope ?? PERSISTENT_PARAMETER_SCOPE.BY_SCRIPT;
+        const dontStoreDefault = options?.dontStoreDefault ?? false;
         let parameterNameForMonkey = parameterName;
         let scopeName = undefined
         if (scope === PERSISTENT_PARAMETER_SCOPE.BY_HOST) {
@@ -70,17 +72,29 @@ const getPersistentParameterValue = (() => {
         let menuCommandUnregisterFunction = null;
 
         if (!hookableValueParameterValues[parameterName]) {
-            const value = await monkeyGetSetValue(parameterNameForMonkey, defaultValue);
+            let value = await monkeyGetValue(parameterNameForMonkey);
+            if (value === undefined) {
+                value = defaultValue;
+            }
+            if (value === defaultValue && dontStoreDefault) {
+                await monkeyDeleteValue(parameterNameForMonkey);
+            } else {
+                await monkeySetValue(parameterNameForMonkey, value);
+            }
             hookableValueParameterValues[parameterName] = new HookableValue(parameterName);
             const hookableValue = hookableValueParameterValues[parameterName];
             await hookableValue.register(async (newValue) => {
-                await monkeySetValue(parameterNameForMonkey, newValue);
+                if (newValue === defaultValue && dontStoreDefault) {
+                    await monkeyDeleteValue(parameterNameForMonkey);
+                } else {
+                    await monkeySetValue(parameterNameForMonkey, newValue);
+                }
 
                 if (menuCommandUnregisterFunction) {
                     await menuCommandUnregisterFunction();
                     menuCommandUnregisterFunction = null;
                 }
-                const label = await getMenuLabel(parameterName, newValue);
+                const label = await getMenuLabel(parameterName, newValue, scopeName);
                 menuCommandUnregisterFunction = await registerMenuCommand(label, async () => {
                     const nextValue = await onParameterNeedNewValue(newValue);
                     if (nextValue !== null) {
