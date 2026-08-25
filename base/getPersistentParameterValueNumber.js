@@ -17,8 +17,8 @@ const getPersistentParameterValueNumber = async (parameterName, defaultValue, op
             const newValue = Number(newValueString);
             return newValue;
         },
-        getMenuLabel: async (parameterName, newValue) => {
-            return `⚙️ Change ${parameterName} (current : ${newValue})`;
+        getMenuLabel: async (parameterName, newValue, scopeName) => {
+            return `⚙️ Change ${parameterName} (current : ${newValue}${scopeName ? `, scope: ${scopeName}` : ''})`;
         },
         ...options,
     })

@@ -45,7 +45,7 @@ const getPersistentParameterValue = (() => {
         if (!options) {
             options = {};
         }
-        const getMenuLabel = options?.getMenuLabel ?? ((parameterName, newValue) => `⚙️ Change ${parameterName} (current : ${newValue})`);
+        const getMenuLabel = options?.getMenuLabel ?? ((parameterName, newValue, scopeName) => `⚙️ Change ${parameterName} (current : ${newValue}${scopeName ? `, scope: ${scopeName}` : ''})`);
         const onParameterNeedNewValue = options?.onParameterNeedNewValue ?? (async (oldValue) => {
             const newValue = prompt(`⌨️ Enter new value for ${parameterName}:`, oldValue);
             return newValue;
@@ -53,13 +53,17 @@ const getPersistentParameterValue = (() => {
         const alertOnChange = options?.alertOnChange ?? false;
         const scope = options?.scope ?? PERSISTENT_PARAMETER_SCOPE.BY_SCRIPT;
         let parameterNameForMonkey = parameterName;
+        let scopeName = undefined
         if (scope === PERSISTENT_PARAMETER_SCOPE.BY_HOST) {
-            parameterNameForMonkey = `${parameterName}_host_${location.host}`;
+            scopeName = location.host;
+            parameterNameForMonkey = `${parameterName}_host_${scopeName}`;
         } else if (scope === PERSISTENT_PARAMETER_SCOPE.BY_DOMAIN) {
-            parameterNameForMonkey = `${parameterName}_domain_${location.hostname.split('.').slice(-2).join('.')}`;
+            scopeName = location.hostname.split('.').slice(-2).join('.');
+            parameterNameForMonkey = `${parameterName}_domain_${scopeName}`;
         } else if (scope === PERSISTENT_PARAMETER_SCOPE.BY_CUSTOM) {
             const customScopeKey = options?.customScopeKey ?? '';
-            parameterNameForMonkey = `${parameterName}_custom_${customScopeKey}`;
+            scopeName = customScopeKey;
+            parameterNameForMonkey = `${parameterName}_custom_${scopeName}`;
         }
 
         /** @type{(()=>Promise<void>) | null} */
