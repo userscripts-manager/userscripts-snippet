@@ -1,5 +1,5 @@
-// @grant{GM.getValue}
-// @grant{GM.setValue}
+// @import{monkeyGetValue}
+// @import{monkeySetValue}
 /**
  * Get the value from the monkey (Tampermonkey/Greasemonkey/Violentmonkey/etc.) storage, and set them with the default if nothing already exists
  * 
@@ -9,9 +9,9 @@
  * @returns {Promise<T>} The value to use
  */
 const monkeyGetSetValue = async (key, value) => {
-    const storedValue = await GM.getValue(key);
+    const storedValue = await monkeyGetValue(key);
     if (storedValue === undefined && value !== undefined) {
-        await GM.setValue(key, value);
+        await monkeySetValue(key, value);
         return value;
     }
     return storedValue;
