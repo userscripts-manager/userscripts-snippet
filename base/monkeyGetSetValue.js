@@ -5,14 +5,14 @@
  * 
  * @template T
  * @param {String} key The key to use to name the value to get or set
- * @param {T} value The default value to set and return if not defined
+ * @param {T} defaultValue The default value to set and return if not defined
  * @returns {Promise<T>} The value to use
  */
-const monkeyGetSetValue = async (key, value) => {
+const monkeyGetSetValue = async (key, defaultValue) => {
     const storedValue = await monkeyGetValue(key);
-    if (storedValue === undefined && value !== undefined) {
-        await monkeySetValue(key, value);
-        return value;
+    if (storedValue === undefined && defaultValue !== undefined) {
+        await monkeySetValue(key, defaultValue);
+        return defaultValue;
     }
     return storedValue;
 }
