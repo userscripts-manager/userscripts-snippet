@@ -8,10 +8,12 @@
 /**
  * @typedef {Object} GetPersistentParameterValueOptions
  * @property {((oldValue: T) => Promise<T>)} [onParameterNeedNewValue] A callback function that is called when a new parameter value is needed, with the old value as parameter, and that returns the new value
- * @property {((parameterName: string, newValue: T) => Promise<String>)} [getMenuLabel] A callback function that is called to get the menu label, with the parameter name and the new value as parameters, and that returns the menu label
+ * @property {((parameterName: string, newValue: T, scopeName?: string) => Promise<String>)} [getMenuLabel] A callback function that is called to get the menu label, with the parameter name and the new value as parameters, and that returns the menu label
  * @property {PERSISTENT_PARAMETER_SCOPE} [scope] The scope of the persistent parameter. This determines how the parameter value is stored and shared across different pages. Default is PERSISTENT_PARAMETER_SCOPE.BY_SCRIPT.
  * @property {string} [customScopeKey] If the scope is BY_CUSTOM, this key is used to differentiate the parameter value. It can be set to any string, but it should be unique to avoid conflicts with other parameters. Default is an empty string.
  * @property {boolean} [alertOnChange] Whether to alert the user when the parameter value changes. Default is false.
+ * @property {boolean} [dontStoreDefault] Whether to not store the default value in the monkey storage. If true, the default value will not be stored, and the parameter will be considered unset until it is changed. Default is false.
+ * @property {string} [displayName] The display name of the parameter, which can be used in the menu command instead of the parameter name. Default is the parameter name.
  */
 
 /**
@@ -46,9 +48,10 @@ const getPersistentParameterValue = (() => {
         if (!options) {
             options = {};
         }
-        const getMenuLabel = options?.getMenuLabel ?? ((parameterName, newValue, scopeName) => `⚙️ Change ${parameterName} (current : ${newValue}${scopeName ? `, scope: ${scopeName}` : ''})`);
+        const displayName = options?.displayName ?? parameterName;
+        const getMenuLabel = options?.getMenuLabel ?? ((parameterName, newValue, scopeName) => `⚙️ Change ${displayName} (current : ${newValue}${scopeName ? `, scope: ${scopeName}` : ''})`);
         const onParameterNeedNewValue = options?.onParameterNeedNewValue ?? (async (oldValue) => {
-            const newValue = prompt(`⌨️ Enter new value for ${parameterName}:`, oldValue);
+            const newValue = prompt(`⌨️ Enter new value for ${displayName}:`, oldValue);
             return newValue;
         });
         const alertOnChange = options?.alertOnChange ?? false;
@@ -103,7 +106,7 @@ const getPersistentParameterValue = (() => {
                 });
 
                 if (alertOnChange) {
-                    alert(`ℹ️ Parameter [${parameterName}] is set to ${hookableValue.value}`);
+                    alert(`ℹ️ Parameter [${parameterName}]${parameterName !== displayName ? ` (${displayName})` : ''} is set to ${hookableValue.value}${scopeName ? ` (scope: ${scopeName})` : ''}`);
                 }
             });
             hookableValue.value = value;

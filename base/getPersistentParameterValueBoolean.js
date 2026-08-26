@@ -19,7 +19,7 @@ const getPersistentParameterValueBoolean = async (parameterName, defaultValue, o
             return !oldValue;
         },
         getMenuLabel: async (parameterName, newValue, scopeName) => {
-            return `${newValue ? '❌ Disable' : '✅ Enable'} ${parameterName}${scopeName ? ` (scope: ${scopeName})` : ''}`;
+            return `${newValue ? '❌ Disable' : '✅ Enable'} ${options?.displayName ?? parameterName}${scopeName ? ` (scope: ${scopeName})` : ''}`;
         },
         ...options,
     })
