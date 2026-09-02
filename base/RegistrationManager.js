@@ -19,13 +19,15 @@ class RegistrationManager {
 
     /**
      * Add a new cleanup function
-     * @param {() => void} cleanupFunction 
+     * @param {(() => Promise<void>)|undefined} cleanupFunction 
      */
-    onRegistration(cleanupFunction) {
-        if (this.autoCleanupOnAfterFirstCleanup && this.hasBeenCleanedUp) {
-            cleanupFunction()
-        } else {
-            this.cleanupFunctions.push(cleanupFunction)
+    async onRegistration(cleanupFunction) {
+        if (cleanupFunction) {
+            if (this.autoCleanupOnAfterFirstCleanup && this.hasBeenCleanedUp) {
+                await cleanupFunction()
+            } else {
+                this.cleanupFunctions.push(cleanupFunction)
+            }
         }
     }
 

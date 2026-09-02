@@ -23,9 +23,9 @@
  * @param {() => {}} [options.onUpdateFilteredList] A function that is called when the filtered list is updated to allow reacting to changes in the filtered items
  * @param {() => {}} [options.onOnInputChanged] A function that is called when the input value changes to allow reacting to changes in the input value
  * 
- * @returns {()=>void} A function to cleanup the registration
+ * @returns {Promise<()=>Promise<void>>} A function to cleanup the registration
  */
-const registerMakeInputSearchFilterList = (inputElement, list, options) => {
+const registerMakeInputSearchFilterList = async (inputElement, list, options) => {
     if (!options) {
         options = {}
     }
@@ -69,7 +69,7 @@ const registerMakeInputSearchFilterList = (inputElement, list, options) => {
     const ratioScroll = options.ratioScroll
     const guardScroll = options.guardScroll
 
-    registrationManager.onRegistration(() => {
+    await registrationManager.onRegistration(async () => {
         if (currentItem !== null) {
             setItemCurrent(currentItem, false)
         }
@@ -154,8 +154,8 @@ const registerMakeInputSearchFilterList = (inputElement, list, options) => {
         options.onOnInputChanged(onInputChanged)
     }
 
-    registrationManager.onRegistration(registerEventListener(inputElement, 'input', onInputChanged));
+    await registrationManager.onRegistration(registerEventListener(inputElement, 'input', onInputChanged));
     onInputChanged()
 
-    return () => registrationManager.cleanupAll()
+    return async () => await registrationManager.cleanupAll()
 }

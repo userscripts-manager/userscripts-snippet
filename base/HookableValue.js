@@ -42,7 +42,7 @@ class HookableValue {
     /**
      * Register a callback to be called when the value changes
      * @param {(newValue:T, oldValue:T)=>Promise<void>} callback The callback (that may be async)
-     * @returns {()=>Promise<void>} The unregister function
+     * @returns {Promise<()=>Promise<void>>} The unregister function
      */
     async register(callback) {
         this.callbacks.push(callback);
@@ -54,7 +54,7 @@ class HookableValue {
     /**
      * Registers a callback and immediately calls it with the current value
      * @param {(newValue:T, oldValue:T)=>Promise<void>} callback The callback (that may be async)
-     * @returns {()=>Promise<void>} The unregister function
+     * @returns {Promise<()=>Promise<void>>} The unregister function
      */
     async registerAndCall(callback) {
         const unregisterFunction = await this.register(callback);
@@ -66,7 +66,7 @@ class HookableValue {
      * Registers a callback to be called when any of the given hookable values changes
      * @param {HookableValue[]} hookableValues The hookable values to watch
      * @param {(newValues: any[], oldValues: any[]) => Promise<void>} callback The callback (that may be async) that will receive the new and old values of all the hookable values
-     * @returns {()=>Promise<void>} The unregister function
+     * @returns {Promise<()=>Promise<void>>} The unregister function
      */
     static async registerAll(hookableValues, callback) {
         const unregisterFunctions = await Promise.all(hookableValues.map(
